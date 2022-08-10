@@ -10,6 +10,17 @@ const STATE = Object({
 // const board = Array.replicate(9,'')
 const board = Array.replicate(9, " ")
 
+const winningPatterns = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6]
+]
+
 const errIsMoveInBoard = "A square in the board should be selected"
 const errIsMoveValid = "The square has been played by a player already"
 
@@ -25,7 +36,7 @@ const isMoveInBoard = (move) => (0 <= move && move < SQAURES)
 
 
 // check if the squared has been selected by a player
-const isMoveValid = (state, move) => (! (state.board[move] == "x" || state.board[move] == "o") )
+const isMoveValid = (state, move) => (! (state.board[move] == "x" || state.board[move] == "o"))
 
 
 const getValidSquare = (interact, state) => {
@@ -45,13 +56,28 @@ const applyPlayerMove = (state, move) => {
   }
 }
 
-const hasGameEnd = (state) =>  Array.all(state.board, (square) => (square === 'x' || square === 'o'))
+const isAllSquaresFilled = (state) => Array.all(state.board, (square) => (square === 'x' || square === 'o')) // All squares filled
+// const checkWin = (state) => {
+//   pattern.forEach((currentPattern) =>{
+//     const firstPlayer = state.board[currentPattern[0]]
+//     if(firstPlayer == "") return;
+//     let foundWinngingPattern = true
+//     currentPattern.forEachWithIndex((dummy, index) => {
+//       if (state.board[index] !== firstPlayer){
+//         foundWinngingPattern = false;
+//       }
+//     })
+//     return currentPattern 
+//   })
+// }
 
+const hasGameEnd = (state) => (isAllSquaresFilled(state))
+// || (checkWin(state))
 
 const commonInteract = {
   ...hasRandom,
   getSquareSelected: Fun([STATE], UInt)
-  
+
 }
 
 const AInteract = {
@@ -83,28 +109,28 @@ export const main = Reach.App(() => {
 
   var state = initialGameState(true)
   invariant(balance() == (2 * budget))
-  while(!hasGameEnd(state)){
-   if (state.playerTurn == true) {
-    commit()
+  while (!hasGameEnd(state)) {
+    if (state.playerTurn == true) {
+      commit()
 
-    A.only(() => {
-      const xMove = getValidSquare(interact, state)
-    });
-    A.publish(xMove);
+      A.only(() => {
+        const xMove = getValidSquare(interact, state)
+      });
+      A.publish(xMove);
 
-    state = applyPlayerMove(state, xMove);
-    continue;
-   } else {
-    commit()
+      state = applyPlayerMove(state, xMove);
+      continue;
+    } else {
+      commit()
 
-    B.only(() => {
-      const oMove = getValidSquare(interact, state)
-    });
+      B.only(() => {
+        const oMove = getValidSquare(interact, state)
+      });
 
-    B.publish(oMove);
-    state = applyPlayerMove(state, oMove);
-    continue;
-   }
+      B.publish(oMove);
+      state = applyPlayerMove(state, oMove);
+      continue;
+    }
   }
 
 

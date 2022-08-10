@@ -33,14 +33,15 @@ const interactwith = (who) => ({
     console.log(`${who} accepted the budget of ${formatCurrency(amount)} ${suStr}`);
   },
   getSquareSelected: (state) => {
-    console.log(`${who} chooses a move: ${createBoard(state)}`)
+    console.log(`${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
     const board = state.board;
-    // while (board) {
+    while (board) {
       const randomNumber = Math.floor(Math.random() * 9)
-      // if (!board[randomNumber]) {
+      const isSquaredFilled = board[randomNumber] == 'x' || board[randomNumber] == 'o'
+      if (!isSquaredFilled) {
         return randomNumber;
-      // }
-    // }
+      }
+    }
     throw Error(`impossibe to make a move`)
     // if(board[randomNumber]){
     //   return randomNumber;
