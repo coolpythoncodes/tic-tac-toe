@@ -5,6 +5,7 @@ const stdlib = loadStdlib(process.env);
 // constants
 const budget = 10;
 const suStr = stdlib.standardUnit
+const OUTCOME = ['Alice Wins!', 'Bob Wins!',]
 
 
 // helper functions
