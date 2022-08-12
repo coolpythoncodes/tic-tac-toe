@@ -48,6 +48,12 @@ const interactwith = (who) => ({
     //   return randomNumber;
     // }
   },
+  seeOutcome: (outcome)=>{
+    console.log(`${who} saw an outcome of ${OUTCOME[outcome]}`);
+  },
+  endsWith: (state)=> {
+    console.log(`${who} sees the final state ${createBoard(state)} `)
+  }
 })
 
 const startingBalance = stdlib.parseCurrency(100);

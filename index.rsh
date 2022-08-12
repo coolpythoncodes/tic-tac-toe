@@ -58,11 +58,13 @@ const oWon = (b) => (
 const calculateWinner = (b) => {
   if (xWon(b)) {
     return 0
-  }
-  if (oWon(b)) {
+  }else{
     return 1
   }
-  return 2;
+  // if (oWon(b)) {
+  //   return 1
+  // }
+  // return 2;
 }
 // helper function
 
@@ -99,7 +101,7 @@ const hasGameEnd = (state) => (isAllSquaresFilled(state)) || checkWin(state.boar
 const commonInteract = {
   ...hasRandom,
   getSquareSelected: Fun([STATE], UInt),
-  seeOutcome: Fun([STATE], UInt),
+  seeOutcome: Fun([UInt], Null),
   endsWith: Fun([STATE], Null),
 }
 
@@ -156,10 +158,11 @@ export const main = Reach.App(() => {
 
     }
   }
-
-  const [toA, toB] = xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [1, 1];
-  transfer(toA * budget).to(A)
-  transfer(toB * budget).to(B)
+  const outcome = calculateWinner(state.board)
+  // const [toA, toB] = xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [1, 1];
+  // transfer(toA * budget).to(A)
+  // transfer(toB * budget).to(B)
+  transfer(balance()).to(A)
   commit();
 
   each([A, B], () => {
