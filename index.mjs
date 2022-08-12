@@ -27,14 +27,14 @@ const formatCurrency = (amount) => stdlib.formatCurrency(amount, 4);
 const interactwith = (who) => ({
   ...stdlib.hasRandom,
   getBudget: () => {
-    console.log(`${who}'s budget for the game is ${formatCurrency(parseCurrency(budget))} ${suStr}`);
+    console.log(`\n ${who}'s budget for the game is ${formatCurrency(parseCurrency(budget))} ${suStr} \n`);
     return parseCurrency(budget);
   },
   acceptBudget: (amount) => {
-    console.log(`${who} accepted the budget of ${formatCurrency(amount)} ${suStr}`);
+    console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
   },
   getSquareSelected: (state) => {
-    console.log(`${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
+    console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
     const board = state.board;
     while (board) {
       const randomNumber = Math.floor(Math.random() * 9)
@@ -49,10 +49,10 @@ const interactwith = (who) => ({
     // }
   },
   seeOutcome: (outcome)=>{
-    console.log(`${who} saw an outcome of ${OUTCOME[outcome]}`);
+    console.log(`\n ${who} saw an outcome of ${OUTCOME[outcome]} \n`);
   },
   endsWith: (state)=> {
-    console.log(`${who} sees the final state ${createBoard(state)} `)
+    console.log(`${who} sees the final state \n ${createBoard(state)} `)
   }
 })
 

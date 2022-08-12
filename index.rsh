@@ -38,34 +38,56 @@ const col = (b, c) => {
   }
 }
 
+// diagonal starting at the column 0 and row 0
+const diagonalLeft = (b, c) => {
+  if (b[0] == b[4] || b[0] == b[8]) {
+    return b[0]
+  } else {
+    return '-'
+  }
+}
+
+// diagonal starting at the column 2 and row 0
+const diagonalRight = (b, c) => {
+  if (b[2] == b[4] || b[2] == b[6]) {
+    return b[2]
+  } else {
+    return '-'
+  }
+}
 
 const checkWin = (b) => (row(b, 0) == 'x' || row(b, 1) == 'x' || row(b, 2) == 'x' ||
   row(b, 0) == 'o' || row(b, 1) == 'o' || row(b, 2) == 'o' ||
   col(b, 0) == 'x' || col(b, 1) == 'x' || col(b, 2) == 'x' ||
-  col(b, 0) == 'o' || col(b, 1) == 'o' || col(b, 2) == 'o'
+  col(b, 0) == 'o' || col(b, 1) == 'o' || col(b, 2) == 'o' ||
+  diagonalLeft(b, 0) == 'x' || diagonalLeft(b, 0) == 'o' ||
+  diagonalRight(b, 2) == 'x' || diagonalRight(b, 2) == 'o'
 )
 
 const xWon = (b) => (
   row(b, 0) == 'x' || row(b, 1) == 'x' || row(b, 2) == 'x' ||
-  col(b, 0) == 'x' || col(b, 1) == 'x' || col(b, 2) == 'x'
+  col(b, 0) == 'x' || col(b, 1) == 'x' || col(b, 2) == 'x' ||
+  diagonalLeft(b, 0) == 'x' || diagonalRight(b, 2) == 'x' 
 )
 
 const oWon = (b) => (
   row(b, 0) == 'o' || row(b, 1) == 'o' || row(b, 2) == 'o' ||
-  col(b, 0) == 'o' || col(b, 1) == 'o' || col(b, 2) == 'o'
+  col(b, 0) == 'o' || col(b, 1) == 'o' || col(b, 2) == 'o' ||
+  diagonalLeft(b, 0) == 'o' || diagonalRight(b, 2) == 'o'
 )
 
-const calculateWinner = (b) => {
-  if (xWon(b)) {
-    return 0
-  }else{
-    return 1
-  }
-  // if (oWon(b)) {
-  //   return 1
-  // }
-  // return 2;
-}
+const calculateWinner = (b) => (xWon(b) ? 0 : oWon(b) ? 1 : 0)
+
+// {
+
+//   if (xWon(b)) {
+//     return 0
+//   }else if (oWon(b)){
+//     return 1
+//   }else {
+//     return 2
+//   }
+// }
 // helper function
 
 // check if the move is not outside the board
