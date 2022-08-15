@@ -26,10 +26,7 @@ const formatCurrency = (amount) => stdlib.formatCurrency(amount, 4);
 
 const interactwith = (who) => ({
   ...stdlib.hasRandom,
-  getBudget: () => {
-    console.log(`\n ${who}'s budget for the game is ${formatCurrency(parseCurrency(budget))} ${suStr} \n`);
-    return parseCurrency(budget);
-  },
+  budget: parseCurrency(budget),
   acceptBudget: (amount) => {
     console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
   },
