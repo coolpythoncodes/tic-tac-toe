@@ -31,8 +31,8 @@ const interactwith = (who) => ({
     console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
   },
   getSquareSelected: (state) => {
-    console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
     const board = state.board;
+    // console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
     while (board) {
       const randomNumber = Math.floor(Math.random() * 9)
       const isSquaredFilled = board[randomNumber] == 'x' || board[randomNumber] == 'o'
@@ -45,10 +45,14 @@ const interactwith = (who) => ({
     //   return randomNumber;
     // }
   },
-  seeOutcome: (outcome)=>{
+  seeOutcome: (outcome) => {
     console.log(`\n ${who} saw an outcome of ${OUTCOME[outcome]} \n`);
   },
-  endsWith: (state)=> {
+  seeBoard: (state) => {
+    const board = state.board;
+    console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
+  },
+  endsWith: (state) => {
     console.log(`${who} sees the final state \n ${createBoard(state)} `)
   }
 })
