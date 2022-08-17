@@ -27,8 +27,17 @@ const formatCurrency = (amount) => stdlib.formatCurrency(amount, 4);
 const interactwith = (who) => ({
   ...stdlib.hasRandom,
   budget: parseCurrency(budget),
-  acceptBudget: (amount) => {
-    console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
+  deadline: 10,
+  acceptBudget: async (amount) => {
+    if (Math.random() <= 0.5) {
+      for (let i = 0; i < 10; i++) {
+        console.log(`  Bob takes his sweet time...`);
+        await stdlib.wait(1);
+      }
+    } else {
+      console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
+      // console.log(`Bob accepts the wager of ${fmt(amt)}.`);
+    }
   },
   getSquareSelected: (state) => {
     const board = state.board;
@@ -54,6 +63,9 @@ const interactwith = (who) => ({
   },
   endsWith: (state) => {
     console.log(`${who} sees the final state \n ${createBoard(state)} `)
+  },
+  informTimeOut: () => {
+    console.log(`${who} observes a time out`)
   }
 })
 
@@ -61,6 +73,11 @@ const startingBalance = stdlib.parseCurrency(100);
 
 const [accAlice, accBob] =
   await stdlib.newTestAccounts(2, startingBalance);
+
+// Alice and Bob initial balance
+const getBalance = async (who) => formatCurrency(await stdlib.balanceOf(who));
+const beforeAlice = await getBalance(accAlice);
+const beforeBob = await getBalance(accBob);
 console.log('Hello, Alice and Bob!');
 
 console.log('Launching...');
@@ -73,4 +90,8 @@ await Promise.all([
   backend.Bob(ctcBob, interactwith("Bob")),
 ]);
 
-console.log('Goodbye, Alice and Bob!');
+const afterAlice = await getBalance(accAlice)
+const afterBob = await getBalance(accBob)
+
+console.log(`Alice went from ${beforeAlice} to ${afterAlice}`)
+console.log(`Bob went from ${beforeBob} to ${afterBob}`)

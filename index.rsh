@@ -67,7 +67,7 @@ const checkWin = (b) => (row(b, 0) == 'x' || row(b, 1) == 'x' || row(b, 2) == 'x
 const xWon = (b) => (
   row(b, 0) == 'x' || row(b, 1) == 'x' || row(b, 2) == 'x' ||
   col(b, 0) == 'x' || col(b, 1) == 'x' || col(b, 2) == 'x' ||
-  diagonalLeft(b, 0) == 'x' || diagonalRight(b, 2) == 'x' 
+  diagonalLeft(b, 0) == 'x' || diagonalRight(b, 2) == 'x'
 )
 
 const oWon = (b) => (
@@ -76,18 +76,8 @@ const oWon = (b) => (
   diagonalLeft(b, 0) == 'o' || diagonalRight(b, 2) == 'o'
 )
 
-const calculateWinner = (b) => (xWon(b) ? 0 : oWon(b) ? 1 : 0)
+const calculateWinner = (b) => (xWon(b) ? 0 : oWon(b) ? 1 : 2)
 
-// {
-
-//   if (xWon(b)) {
-//     return 0
-//   }else if (oWon(b)){
-//     return 1
-//   }else {
-//     return 2
-//   }
-// }
 // helper function
 
 // check if the move is not outside the board
@@ -120,12 +110,15 @@ const isAllSquaresFilled = (state) => Array.all(state.board, (square) => (square
 
 const hasGameEnd = (state) => (isAllSquaresFilled(state)) || checkWin(state.board)
 
+
 const commonInteract = {
   ...hasRandom,
   getSquareSelected: Fun([STATE], UInt),
   seeBoard: Fun([STATE], Null),
   seeOutcome: Fun([UInt], Null),
   endsWith: Fun([STATE], Null),
+  informTimeOut: Fun([], Null),
+  deadline: UInt,
 }
 
 const AInteract = {
@@ -142,17 +135,25 @@ export const main = Reach.App(() => {
   const A = Participant('Alice', AInteract);
   const B = Participant('Bob', BInteract);
   init();
+
+
+  const informTimeOut = () => {
+    each([A, B], () => {
+      interact.informTimeOut();
+    });
+  }
   // The first one to publish deploys the contract
   A.only(() => {
     const budget = declassify(interact.budget);
+    const deadline = declassify(interact.deadline);
   });
-  A.publish(budget)
+  A.publish(budget, deadline)
     .pay(budget);
   commit();
 
   // The second one to publish always attaches
   B.interact.acceptBudget(budget);
-  B.pay(budget);
+  B.pay(budget).timeout(relativeTime(deadline), () => closeTo(A, informTimeOut));
   // commit();
 
   var state = initialGameState(true)
@@ -164,10 +165,11 @@ export const main = Reach.App(() => {
       A.only(() => {
         const xMove = getValidSquare(interact, state)
       });
-      A.publish(xMove);
+      A.publish(xMove)
+        .timeout(relativeTime(deadline), () => closeTo(B, informTimeOut));
       A.interact.seeBoard(applyPlayerMove(state, xMove))
       state = applyPlayerMove(state, xMove);
-      
+
       continue;
     } else {
       commit()
@@ -176,7 +178,8 @@ export const main = Reach.App(() => {
         const oMove = getValidSquare(interact, state)
       });
 
-      B.publish(oMove);
+      B.publish(oMove)
+        .timeout(relativeTime(deadline), () => closeTo(A, informTimeOut));
       B.interact.seeBoard(applyPlayerMove(state, oMove))
       state = applyPlayerMove(state, oMove);
       // B.interact.seeBoard(state)
@@ -185,10 +188,16 @@ export const main = Reach.App(() => {
     }
   }
   const outcome = calculateWinner(state.board)
-  // const [toA, toB] = xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [1, 1];
-  // transfer(toA * budget).to(A)
-  // transfer(toB * budget).to(B)
-  transfer(balance()).to(A)
+  // const [toA, toB] = (outcome == 0 ? [2, 0]
+  //   : outcome == 1 ? [0, 2]
+  //     : [1, 1]);
+  // const [toA, toB] = (xWon(state.board))
+  const [toA, toB] = (xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [1, 1])
+
+
+  transfer(toA * budget).to(A)
+  transfer(toB * budget).to(B)
+  // transfer(balance()).to(A)
   commit();
 
   each([A, B], () => {
