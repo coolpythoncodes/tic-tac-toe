@@ -5,7 +5,7 @@ const stdlib = loadStdlib(process.env);
 // constants
 const budget = 10;
 const suStr = stdlib.standardUnit
-const OUTCOME = ['Alice Wins!', 'Bob Wins!',]
+const OUTCOME = ['Alice Wins!', 'Bob Wins!',"Draw"]
 
 
 // helper functions
@@ -35,19 +35,29 @@ const interactwith = (who) => ({
     //     await stdlib.wait(1);
     //   }
     // } else {
-      console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
-      // console.log(`Bob accepts the wager of ${fmt(amt)}.`);
+    console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
     // }
   },
-  getSquareSelected: (state) => {
+  getSquareSelected: async (state) => {
     const board = state.board;
     // console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
     while (board) {
-      const randomNumber = Math.floor(Math.random() * 9)
-      const isSquaredFilled = board[randomNumber] == 'x' || board[randomNumber] == 'o'
-      if (!isSquaredFilled) {
-        return randomNumber;
+      // if (Math.random() <= 0.5) {
+      //   for (let i = 0; i < 10; i++) {
+      //     console.log(`${who} takes his sweet time...`);
+      //     await stdlib.wait(1);
+      //   }
+      // } else {
+        const randomNumber = Math.floor(Math.random() * 9)
+        const isSquaredFilled = board[randomNumber] == 'x' || board[randomNumber] == 'o'
+        if (!isSquaredFilled) {
+          return randomNumber;
+        // }
       }
+
+
+
+
     }
     throw Error(`impossibe to make a move`)
     // if(board[randomNumber]){
@@ -58,7 +68,6 @@ const interactwith = (who) => ({
     console.log(`\n ${who} saw an outcome of ${OUTCOME[outcome]} \n`);
   },
   seeBoard: (state) => {
-    const board = state.board;
     console.log(`\n ${who} chooses a move from the state:\n  ${createBoard(state)} \n`)
   },
   endsWith: (state) => {

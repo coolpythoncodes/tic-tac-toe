@@ -18,55 +18,6 @@ const initialGameState = (player) => ({
   board,
 })
 
-// // check winning combo in row
-// const row = (b, r) => {
-//   const n = r * 3;
-//   const p1 = b[n]; 
-//   const p2 = b[n + 1];
-//   const p3 = b[n + 2];
-//   if (p1 == p2 && p1 == p3) {
-//     return p1
-//   } else {
-//     return '-'
-//   }
-
-// }
-
-// // check winning combo in col
-// const col = (b, c) => {
-//   const p1 = b[c]; 
-//   const p2 = b[c + 3];
-//   const p3 = b[c + 6];
-//   if (p1 == p2 && p1 == p3) {
-//     return p1
-//   } else {
-//     return '-'
-//   }
-// }
-
-// // diagonal starting at the column 0 and row 0
-// const diagonalLeft = (b, c) => {
-//   const p1 = b[0]; 
-//   const p2 = b[4];
-//   const p3 = b[8];
-//   if (p1 == p2 && p1 == p3) {
-//     return p1;
-//   } else {
-//     return '-'
-//   }
-// }
-
-// // diagonal starting at the column 2 and row 0
-// const diagonalRight = (b, c) => {
-//   const p1 = b[2]; 
-//   const p2 = b[4];
-//   const p3 = b[6];
-//   if (p2 == p2 && p2 == p3) {
-//     return p1
-//   } else {
-//     return '-'
-//   }
-// }
 
 const checkWin = (b) => {
 
@@ -83,54 +34,18 @@ const checkWin = (b) => {
   const leftDiagonal = p0 == p4 && p0 == p8 ? p0 : '-'
   const rightDiagonal = p2 == p4 && p2 == p6 ? p2 : '-'
 
-  if(row1 == 'x' || row2 == 'x' || row3 == 'x' || col1 == 'x' || col2 == 'x' || col3 == 'x' || leftDiagonal == 'x' || rightDiagonal == 'x') {
+  if (row1 == 'x' || row2 == 'x' || row3 == 'x' || col1 == 'x' || col2 == 'x' || col3 == 'x' || leftDiagonal == 'x' || rightDiagonal == 'x') {
     return 0
   }
   else {
-    if(row1 == 'o' || row2 == 'o' || row3 == 'o' || col1 == 'o' || col2 == 'o' || col3 == 'o' || leftDiagonal == 'o' || rightDiagonal == 'o'){
+    if (row1 == 'o' || row2 == 'o' || row3 == 'o' || col1 == 'o' || col2 == 'o' || col3 == 'o' || leftDiagonal == 'o' || rightDiagonal == 'o') {
       return 1
-    }else {
+    } else {
       return 2
     }
   }
 }
 
-// const xWon = (b) => {
-//   const row1 = row(b, 0)
-//   const row2 = row(b, 1)
-//   const row3 = row(b, 2)
-
-//   const col1 = col(b, 0)
-//   const col2 = col(b, 1)
-//   const col3 = col(b, 2)
-
-//   const leftDiagonal = diagonalLeft(b, 0)
-//   const rightDiagonal = diagonalRight(b, 2)
-
-//   return row1 == 'x' || row2 == 'x' || row3 == 'x' ||
-//   col1 == 'x' || col2 == 'x' || col3 == 'x' ||
-//   leftDiagonal == 'x' || rightDiagonal == 'x'
-// }
-
-// const oWon = (b) => {
-
-//   const row1 = row(b, 0)
-//   const row2 = row(b, 1)
-//   const row3 = row(b, 2)
-
-//   const col1 = col(b, 0)
-//   const col2 = col(b, 1)
-//   const col3 = col(b, 2)
-
-//   const leftDiagonal = diagonalLeft(b, 0)
-//   const rightDiagonal = diagonalRight(b, 2)
-
-//   return row1 == 'o' || row2 == 'o' || row3 == 'o' ||
-//   col1 == 'o' || col2 == 'o' || col3 == 'o' ||
-//   leftDiagonal == 'o' || rightDiagonal == 'o'
-// }
-
-// const calculateWinner = (b) => (xWon(b) ? 0 : oWon(b) ? 1 : 2)
 
 // helper function
 
@@ -247,7 +162,7 @@ export const main = Reach.App(() => {
     }
   }
   const outcome = checkWin(state.board)
-  const [toA, toB] = outcome == 0? [2, 0] : outcome == 1? [0, 2]: [1, 1];
+  const [toA, toB] = outcome == 0 ? [2, 0] : outcome == 1 ? [0, 2] : [1, 1];
   // const [toA, toB] = (xWon(state.board))
   // const [toA, toB] = (xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [1, 1])
 
