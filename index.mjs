@@ -29,15 +29,15 @@ const interactwith = (who) => ({
   budget: parseCurrency(budget),
   deadline: 10,
   acceptBudget: async (amount) => {
-    if (Math.random() <= 0.5) {
-      for (let i = 0; i < 10; i++) {
-        console.log(`  Bob takes his sweet time...`);
-        await stdlib.wait(1);
-      }
-    } else {
+    // if (Math.random() <= 0.5) {
+    //   for (let i = 0; i < 10; i++) {
+    //     console.log(`  Bob takes his sweet time...`);
+    //     await stdlib.wait(1);
+    //   }
+    // } else {
       console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
       // console.log(`Bob accepts the wager of ${fmt(amt)}.`);
-    }
+    // }
   },
   getSquareSelected: (state) => {
     const board = state.board;
