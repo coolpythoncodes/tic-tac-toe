@@ -36,6 +36,7 @@ const interactwith = (who) => ({
     //   }
     // } else {
     console.log(`\n ${who} accepted the budget of ${formatCurrency(amount)} ${suStr} \n`);
+    return true
     // }
   },
   getSquareSelected: async (state) => {
