@@ -78,15 +78,16 @@ const addMoveCost = (prevCost, newCost) => {
 }
 
 
-const applyPlayerMove = (state, move) => {
+const applyPlayerMove = (state, move, budget) => {
   require(isMoveInBoard(move), errIsMoveInBoard)
   require(isMoveValid(state, move), errIsMoveValid)
   const player = state.playerTurn
+  const costPerSquare = budget / 16000000
   return {
     playerTurn: !player,
     board: (player ? state.board.set(move, "x") : state.board.set(move, "o")),
-    xCost: player ? addMoveCost(state.xCost, squareCostArray[move]) : state.xCost,
-    oCost: player ? state.oCost : addMoveCost(state.oCost, squareCostArray[move])
+    xCost: player ? addMoveCost(state.xCost, (squareCostArray[move] * costPerSquare)) : state.xCost,
+    oCost: player ? state.oCost : addMoveCost(state.oCost, (squareCostArray[move] * costPerSquare))
   }
 }
 
@@ -174,9 +175,9 @@ export const main = Reach.App(() => {
       A.publish(xMove, xMoveCost)
         .pay(xMoveCost)
         .timeout(relativeTime(deadline), () => closeTo(B, informTimeOut));
-      A.interact.seeBoard(applyPlayerMove(state, xMove))
+      A.interact.seeBoard(applyPlayerMove(state, xMove, budget))
       // [xCost, oCost, gameState] = [addMoveCost(xCost, xMoveCost), oCost, applyPlayerMove(gameState, xMove)]
-      state = applyPlayerMove(state, xMove);
+      state = applyPlayerMove(state, xMove, budget);
       // xCost = addMoveCost(xCost, xMoveCost)
 
       continue;
@@ -191,8 +192,8 @@ export const main = Reach.App(() => {
       B.publish(oMove, oMoveCost)
         .pay(oMoveCost)
         .timeout(relativeTime(deadline), () => closeTo(A, informTimeOut));
-      B.interact.seeBoard(applyPlayerMove(state, oMove))
-      state = applyPlayerMove(state, oMove);
+      B.interact.seeBoard(applyPlayerMove(state, oMove, budget))
+      state = applyPlayerMove(state, oMove, budget);
       // oCost = addMoveCost(oCost, oMoveCost)
       // B.interact.seeBoard(state)
       continue;
@@ -200,15 +201,14 @@ export const main = Reach.App(() => {
     }
   }
   const outcome = checkWin(state.board)
-  // const [toA, toB] = outcome == 0 ? [1, 0] : [0, 1];
-  const [toA, toB] = outcome == 0 ? [1, 0] : outcome == 1 ? [0, 1] : [1/2, 1/2];
-  // const [toA, toB] = (xWon(state.board))
-  // const [toA, toB] = (xWon(state.board) ? [2, 0] : oWon(state.board) ? [0, 2] : [div(1,2), div(1,2)])
+  const [toA, toB] = outcome == 0 ? [2, 0] : outcome == 1 ? [0, 2] : [1, 1]
 
 
-  transfer(toA * balance()).to(A)
-  transfer(toB * balance()).to(B)
-  // transfer(outcome == 0 ? balance() : outcome == 1 ? 0 : (div(balance(), 2))).to(A)
+  const wager = (balance() / 2)
+
+  transfer(toA * wager).to(A)
+  transfer(toB * wager).to(B)
+  // transfer(outcome == 0 ? bal() : outcome == 1 ? 0 : (div(balance(), 2))).to(A)
   // transfer(outcome == 0 ? 0 : outcome == 1 ? balance() : (div(balance(), 2))).to(B)
 
   // transfer(balance()).to(A)
@@ -222,3 +222,11 @@ export const main = Reach.App(() => {
   exit();
 });
 
+// const closeToAll = () => {
+//   Anybody.publish();
+//   const wager = balance() / 2
+//   distributePayment(DRAW, wager);
+//   informTimeout();
+//   commit();
+//   exit();
+// }

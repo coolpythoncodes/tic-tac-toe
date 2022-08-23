@@ -3,7 +3,7 @@ import * as backend from './build/index.main.mjs';
 const stdlib = loadStdlib(process.env);
 
 // constants
-const budget = 10;
+const budget = 1;
 const suStr = stdlib.standardUnit
 const OUTCOME = ['Alice Wins!', 'Bob Wins!',"Draw"]
 
