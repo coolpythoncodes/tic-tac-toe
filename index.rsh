@@ -140,29 +140,15 @@ export const main = Reach.App(() => {
   commit();
 
   // The second one to publish always attaches
-  // B.interact.acceptBudget(budget);
+  // B.interact.acceptBudget(budget);>
   // B.pay(budget).timeout(relativeTime(deadline), () => closeTo(A, informTimeOut));
   B.only(() => {
     const acceptedBudget = declassify(interact.acceptBudget(budget));
   });
   B.publish(acceptedBudget);
-  // if (!acceptedBudget) {
-  //   commit();
-  // each([A, B], () => {
-  //   interact.informTimeOut();
-  // });
-  //   exit()
-  // } else {
-  //   commit();
-  // }
-  // var state = initialGameState(true)
+
   var state = initialGameState(true)
-  // const budgetT = state.xCost + state.oCost
-  // const gameBudget = budget 
-  // var [xCost, oCost, gameState] = [0, 0, state]
-  // {
-  //   const totalMoveCost = () => (state.xCost + state.oCost)
-  // }
+
   invariant(balance() >= 0)
   while (!hasGameEnd(state) && (state.xCost + state.oCost) <= (2 * budget)) {
     if (state.playerTurn == true) {
@@ -176,10 +162,7 @@ export const main = Reach.App(() => {
         .pay(xMoveCost)
         .timeout(relativeTime(deadline), () => closeTo(B, informTimeOut));
       A.interact.seeBoard(applyPlayerMove(state, xMove, budget))
-      // [xCost, oCost, gameState] = [addMoveCost(xCost, xMoveCost), oCost, applyPlayerMove(gameState, xMove)]
       state = applyPlayerMove(state, xMove, budget);
-      // xCost = addMoveCost(xCost, xMoveCost)
-
       continue;
     } else {
       commit()
@@ -194,24 +177,47 @@ export const main = Reach.App(() => {
         .timeout(relativeTime(deadline), () => closeTo(A, informTimeOut));
       B.interact.seeBoard(applyPlayerMove(state, oMove, budget))
       state = applyPlayerMove(state, oMove, budget);
-      // oCost = addMoveCost(oCost, oMoveCost)
-      // B.interact.seeBoard(state)
       continue;
 
     }
   }
   const outcome = checkWin(state.board)
-  const [toA, toB] = outcome == 0 ? [2, 0] : outcome == 1 ? [0, 2] : [1, 1]
+
+  const payRatio = (gameOutcome) => {
+    if (gameOutcome == 0) { // X (Player A) wins
+      return [1, 0]
+    } else if (gameOutcome == 1) { // 0(Player B) wins
+      return [0, 1];
+    } else {
+      return [1, 1]
+    }
+
+  }
+
+  const aBalance = balance() / 2
+  const bBalance = balance() - aBalance
+
+  const aSettlement = (gameOutcome, to) => {
+    if (gameOutcome == 0 || gameOutcome == 1) {
+      return to * balance()
+    } else {
+      return to * aBalance
+    }
+  }
+
+  const bSettlement = (gameOutcome, to) => {
+    if (gameOutcome == 0 || gameOutcome == 1) {
+      return to * balance()
+    } else {
+      return to * bBalance
+    }
+  }
 
 
-  const wager = (balance() / 2)
+  const [toA, toB] = payRatio(outcome);
+  transfer(aSettlement(outcome, toA)).to(A)
+  transfer(bSettlement(outcome, toB)).to(B)
 
-  transfer(toA * wager).to(A)
-  transfer(toB * wager).to(B)
-  // transfer(outcome == 0 ? bal() : outcome == 1 ? 0 : (div(balance(), 2))).to(A)
-  // transfer(outcome == 0 ? 0 : outcome == 1 ? balance() : (div(balance(), 2))).to(B)
-
-  // transfer(balance()).to(A)
   commit();
 
   each([A, B], () => {
